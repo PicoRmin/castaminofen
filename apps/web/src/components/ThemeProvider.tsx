@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react';
 import type { ThemeMode } from '@castaminofen/ui-tokens';
 
 const STORAGE_KEY = 'castaminofen-theme';
@@ -17,7 +24,7 @@ function applyTheme(mode: ThemeMode) {
   document.documentElement.setAttribute('data-theme', mode);
 }
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>('dark');
 
   useEffect(() => {
@@ -42,8 +49,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const value: ThemeContextValue = { theme, setTheme, toggleTheme };
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>{children}</ThemeContext.Provider>
+    // @ts-expect-error duplicate @types/react copies in pnpm monorepo (web React 19 + mobile React 18)
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 

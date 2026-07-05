@@ -18,9 +18,11 @@ import { CoverArt } from '@/components/CoverArt';
 import { ProgressBar } from '@/components/ProgressBar';
 import { SectionHeader } from '@/components/SectionHeader';
 import { EmptyState } from '@/components/EmptyState';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 interface ContentItem {
   id: string;
@@ -96,7 +98,6 @@ function createStyles(colors: ThemeColors) {
       gap: spacing.sm,
     },
     categoryItem: {
-      width: '22%' as const,
       alignItems: 'center' as const,
       marginBottom: spacing.sm,
     },
@@ -137,12 +138,24 @@ function createStyles(colors: ThemeColors) {
       borderRadius: radius.full,
     },
     premiumText: { color: colors.accent, fontSize: 11, fontWeight: '600' as const },
+    featuredGrid: {
+      flexDirection: 'row-reverse' as const,
+      flexWrap: 'wrap' as const,
+      gap: spacing.md,
+      paddingHorizontal: spacing.md,
+    },
+    featuredCardTablet: {
+      width: '48%' as const,
+      marginHorizontal: 0,
+      marginBottom: 0,
+    },
   };
 }
 
 export default function HomeScreen() {
   const { colors } = useAppTheme();
   const styles = useThemedStyles(createStyles);
+  const { isTablet, categoryItemPercent } = useResponsiveLayout();
   const router = useRouter();
   const { user, accessToken } = usePlayerStore();
   const [contents, setContents] = useState<ContentItem[]>([]);
@@ -197,6 +210,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      <ResponsiveContainer>
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
@@ -275,7 +289,7 @@ export default function HomeScreen() {
             {CATEGORIES.map((cat) => (
               <TouchableOpacity
                 key={cat.id}
-                style={styles.categoryItem}
+                style={[styles.categoryItem, { width: categoryItemPercent as `${number}%` }]}
                 accessibilityRole="button"
                 accessibilityLabel={`دسته‌بندی ${cat.label}`}
                 onPress={() => {
@@ -300,10 +314,11 @@ export default function HomeScreen() {
         {/* For You */}
         <View style={styles.section}>
           <SectionHeader title="پیشنهاد برای شما" actionLabel="بیشتر" onAction={() => router.push('/(tabs)/search')} />
+          <View style={isTablet ? styles.featuredGrid : undefined}>
           {contents.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={styles.featuredCard}
+              style={[styles.featuredCard, isTablet && styles.featuredCardTablet]}
               onPress={() => router.push(`/content/${item.id}`)}
               activeOpacity={0.8}
               accessibilityRole="button"
@@ -324,6 +339,7 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
           ))}
+          </View>
           {contents.length === 0 && (
             <EmptyState
               title="فعلاً محتوایی نیست"
@@ -334,8 +350,9 @@ export default function HomeScreen() {
           )}
         </View>
 
-        <View style={{ height: spacing.xxl + 80 }} />
+        <View style={{ height: spacing.xxl + (isTablet ? 40 : 80) }} />
       </ScrollView>
+      </ResponsiveContainer>
     </SafeAreaView>
   );
 }

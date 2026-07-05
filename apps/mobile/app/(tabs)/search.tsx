@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   TextInput,
-  SectionList,
+  ScrollView,
   TouchableOpacity,
   Text,
   ActivityIndicator,
@@ -15,9 +15,11 @@ import { apiFetch } from '@/lib/api';
 import { CoverArt } from '@/components/CoverArt';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorBanner } from '@/components/ErrorBanner';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 const TRENDING = ['روانشناسی', 'تاریخ ایران', 'کسب‌وکار', 'علم', 'فلسفه'];
 
@@ -51,11 +53,6 @@ type SearchResults = {
   episodes: EpisodeItem[];
   creators: CreatorItem[];
 };
-
-type SearchSection =
-  | { key: string; title: string; kind: 'creator'; data: CreatorItem[] }
-  | { key: string; title: string; kind: 'episode'; data: EpisodeItem[] }
-  | { key: string; title: string; kind: 'content'; data: ContentItem[] };
 
 function emptyResults(): SearchResults {
   return { contents: [], episodes: [], creators: [] };
@@ -162,12 +159,24 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'center' as const,
     },
     avatarText: { color: colors.accent, fontWeight: '700' as const, fontSize: 16 },
+    contentGrid: {
+      flexDirection: 'row-reverse' as const,
+      flexWrap: 'wrap' as const,
+      gap: spacing.sm,
+      paddingHorizontal: spacing.md,
+    },
+    contentGridItem: {
+      width: '48%' as const,
+      marginHorizontal: 0,
+      marginBottom: 0,
+    },
   };
 }
 
 export default function SearchScreen() {
   const { colors } = useAppTheme();
   const styles = useThemedStyles(createStyles);
+  const { isTablet } = useResponsiveLayout();
   const router = useRouter();
   const params = useLocalSearchParams<{ q?: string; type?: string }>();
   const [query, setQuery] = useState(params.q ?? '');
@@ -229,107 +238,84 @@ export default function SearchScreen() {
     return () => clearTimeout(timer);
   }, [query, typeFilter, runSearch]);
 
-  const sections = useMemo((): SearchSection[] => {
-    const list: SearchSection[] = [];
-    if (results.creators.length > 0) {
-      list.push({ key: 'creators', title: 'سازندگان', kind: 'creator', data: results.creators });
-    }
-    if (results.episodes.length > 0) {
-      list.push({ key: 'episodes', title: 'اپیزودها', kind: 'episode', data: results.episodes });
-    }
-    if (results.contents.length > 0) {
-      list.push({ key: 'contents', title: 'محتوا', kind: 'content', data: results.contents });
-    }
-    return list;
-  }, [results]);
+  const showResults = useMemo(
+    () => searched && !loading && hasResults(results),
+    [searched, loading, results],
+  );
 
-  const listHeader = (
-    <>
-      <View style={styles.header}>
-        <Text style={styles.title}>جستجو</Text>
+  const renderCreator = (creator: CreatorItem) => (
+    <TouchableOpacity
+      key={`creator-${creator.id}`}
+      style={styles.resultRow}
+      onPress={() => {
+        setQuery(creator.displayName);
+        void runSearch(creator.displayName, typeFilter);
+      }}
+      accessibilityRole="button"
+      accessibilityLabel={`سازنده ${creator.displayName}`}
+    >
+      <Ionicons name="chevron-back" size={18} color={colors.textMuted} />
+      <View style={styles.resultInfo}>
+        <Text style={styles.resultTitle}>
+          {creator.displayName}
+          {creator.isVerified ? ' ✓' : ''}
+        </Text>
+        <Text style={styles.resultMeta}>@{creator.slug}</Text>
       </View>
-
-      <View style={styles.searchRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="پادکست، کتاب صوتی، ویدیو..."
-          placeholderTextColor={colors.textMuted}
-          value={query}
-          onChangeText={setQuery}
-          returnKeyType="search"
-          textAlign="right"
-          accessibilityLabel="جستجو"
-          accessibilityHint="عنوان محتوا، اپیزود یا نام سازنده را وارد کنید"
-        />
-        {query ? (
-          <TouchableOpacity style={styles.clearBtn} onPress={() => setQuery('')} accessibilityLabel="پاک کردن جستجو">
-            <Ionicons name="close-circle" size={20} color={colors.textMuted} />
-          </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity
-          style={styles.searchBtn}
-          onPress={() => runSearch(query, typeFilter)}
-          accessibilityLabel="اجرای جستجو"
-          accessibilityRole="button"
-        >
-          <Ionicons name="search" size={20} color={colors.textOnPrimary} />
-        </TouchableOpacity>
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>{creator.displayName.charAt(0)}</Text>
       </View>
+    </TouchableOpacity>
+  );
 
-      <View style={styles.filters}>
-        {['', 'PODCAST', 'AUDIOBOOK', 'VIDEO'].map((t) => (
-          <TouchableOpacity
-            key={t || 'all'}
-            style={[styles.filterChip, typeFilter === t && styles.filterChipActive]}
-            onPress={() => setTypeFilter(t)}
-            accessibilityRole="button"
-            accessibilityLabel={t === '' ? 'فیلتر همه انواع' : `فیلتر ${t === 'PODCAST' ? 'پادکست' : t === 'AUDIOBOOK' ? 'کتاب صوتی' : 'ویدیو'}`}
-            accessibilityState={{ selected: typeFilter === t }}
-          >
-            <Text style={[styles.filterText, typeFilter === t && styles.filterTextActive]}>
-              {t === '' ? 'همه' : t === 'PODCAST' ? 'پادکست' : t === 'AUDIOBOOK' ? 'کتاب صوتی' : 'ویدیو'}
-            </Text>
-          </TouchableOpacity>
-        ))}
+  const renderEpisode = (episode: EpisodeItem) => (
+    <TouchableOpacity
+      key={`episode-${episode.id}`}
+      style={styles.resultRow}
+      onPress={() => router.push(`/content/${episode.contentId}`)}
+      accessibilityRole="button"
+      accessibilityLabel={`اپیزود ${episode.title} از ${episode.contentTitle}`}
+    >
+      <Ionicons name="chevron-back" size={18} color={colors.textMuted} />
+      <View style={styles.resultInfo}>
+        <Text style={styles.resultTitle}>{episode.title}</Text>
+        <Text style={styles.resultMeta}>
+          {episode.contentTitle}
+          {episode.duration ? ` · ${Math.floor(episode.duration / 60)} دقیقه` : ''}
+        </Text>
       </View>
+      <Ionicons
+        name={episode.isVideo ? 'videocam' : 'musical-notes'}
+        size={22}
+        color={episode.isVideo ? colors.videoProgress : colors.accent}
+      />
+    </TouchableOpacity>
+  );
 
-      {error ? <ErrorBanner message={error} onRetry={() => runSearch(query, typeFilter)} /> : null}
-
-      {!searched && (
-        <View style={styles.trending}>
-          <Text style={styles.trendingTitle}>جستجوهای پرطرفدار</Text>
-          {TRENDING.map((t) => (
-            <TouchableOpacity key={t} style={styles.trendChip} onPress={() => setQuery(t)} accessibilityLabel={`جستجوی ${t}`}>
-              <Text style={styles.trendText}>{t}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
-      {loading && (
-        <View style={styles.center}>
-          <ActivityIndicator color={colors.accent} />
-        </View>
-      )}
-
-      {!loading && searched && !hasResults(results) && !error && (
-        <EmptyState title="نتیجه‌ای پیدا نشد" description="عبارت یا فیلتر دیگری امتحان کنید." />
-      )}
-    </>
+  const renderContent = (content: ContentItem) => (
+    <TouchableOpacity
+      key={`content-${content.id}`}
+      style={[styles.resultRow, isTablet && styles.contentGridItem]}
+      onPress={() => router.push(`/content/${content.id}`)}
+      accessibilityRole="button"
+      accessibilityLabel={`${content.title}، ${content.creator.displayName}`}
+    >
+      <Ionicons name="chevron-back" size={18} color={colors.textMuted} />
+      <View style={styles.resultInfo}>
+        <Text style={styles.resultTitle}>{content.title}</Text>
+        <Text style={styles.resultMeta}>{content.creator.displayName}</Text>
+      </View>
+      <CoverArt type={content.type} coverUrl={content.coverUrl} title={content.title} size="sm" />
+    </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => {
-          if ('contentId' in item) return `episode-${item.id}`;
-          if ('slug' in item) return `creator-${item.id}`;
-          return `content-${item.id}`;
-        }}
-        ListHeaderComponent={listHeader}
+      <ResponsiveContainer>
+      <ScrollView
         contentContainerStyle={styles.list}
-        stickySectionHeadersEnabled={false}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         refreshControl={
           searched ? (
             <RefreshControl
@@ -340,81 +326,102 @@ export default function SearchScreen() {
             />
           ) : undefined
         }
-        renderSectionHeader={({ section }) => (
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-        )}
-        renderItem={({ item, section }) => {
-          if (section.kind === 'creator') {
-            const creator = item as CreatorItem;
-            return (
-              <TouchableOpacity
-                style={styles.resultRow}
-                onPress={() => {
-                  setQuery(creator.displayName);
-                  void runSearch(creator.displayName, typeFilter);
-                }}
-                accessibilityRole="button"
-                accessibilityLabel={`سازنده ${creator.displayName}`}
-              >
-                <Ionicons name="chevron-back" size={18} color={colors.textMuted} />
-                <View style={styles.resultInfo}>
-                  <Text style={styles.resultTitle}>
-                    {creator.displayName}
-                    {creator.isVerified ? ' ✓' : ''}
-                  </Text>
-                  <Text style={styles.resultMeta}>@{creator.slug}</Text>
-                </View>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>{creator.displayName.charAt(0)}</Text>
-                </View>
-              </TouchableOpacity>
-            );
-          }
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>جستجو</Text>
+        </View>
 
-          if (section.kind === 'episode') {
-            const episode = item as EpisodeItem;
-            return (
-              <TouchableOpacity
-                style={styles.resultRow}
-                onPress={() => router.push(`/content/${episode.contentId}`)}
-                accessibilityRole="button"
-                accessibilityLabel={`اپیزود ${episode.title} از ${episode.contentTitle}`}
-              >
-                <Ionicons name="chevron-back" size={18} color={colors.textMuted} />
-                <View style={styles.resultInfo}>
-                  <Text style={styles.resultTitle}>{episode.title}</Text>
-                  <Text style={styles.resultMeta}>
-                    {episode.contentTitle}
-                    {episode.duration ? ` · ${Math.floor(episode.duration / 60)} دقیقه` : ''}
-                  </Text>
-                </View>
-                <Ionicons
-                  name={episode.isVideo ? 'videocam' : 'musical-notes'}
-                  size={22}
-                  color={episode.isVideo ? colors.videoProgress : colors.accent}
-                />
-              </TouchableOpacity>
-            );
-          }
-
-          const content = item as ContentItem;
-          return (
-            <TouchableOpacity
-              style={styles.resultRow}
-              onPress={() => router.push(`/content/${content.id}`)}
-              accessibilityRole="button"
-              accessibilityLabel={`${content.title}، ${content.creator.displayName}`}
-            >
-              <Ionicons name="chevron-back" size={18} color={colors.textMuted} />
-              <View style={styles.resultInfo}>
-                <Text style={styles.resultTitle}>{content.title}</Text>
-                <Text style={styles.resultMeta}>{content.creator.displayName}</Text>
-              </View>
-              <CoverArt type={content.type} coverUrl={content.coverUrl} title={content.title} size="sm" />
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.input}
+            placeholder="پادکست، کتاب صوتی، ویدیو..."
+            placeholderTextColor={colors.textMuted}
+            value={query}
+            onChangeText={setQuery}
+            returnKeyType="search"
+            textAlign="right"
+            accessibilityLabel="جستجو"
+            accessibilityHint="عنوان محتوا، اپیزود یا نام سازنده را وارد کنید"
+          />
+          {query ? (
+            <TouchableOpacity style={styles.clearBtn} onPress={() => setQuery('')} accessibilityLabel="پاک کردن جستجو">
+              <Ionicons name="close-circle" size={20} color={colors.textMuted} />
             </TouchableOpacity>
-          );
-        }}
-      />
+          ) : null}
+          <TouchableOpacity
+            style={styles.searchBtn}
+            onPress={() => runSearch(query, typeFilter)}
+            accessibilityLabel="اجرای جستجو"
+            accessibilityRole="button"
+          >
+            <Ionicons name="search" size={20} color={colors.textOnPrimary} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.filters}>
+          {['', 'PODCAST', 'AUDIOBOOK', 'VIDEO'].map((t) => (
+            <TouchableOpacity
+              key={t || 'all'}
+              style={[styles.filterChip, typeFilter === t && styles.filterChipActive]}
+              onPress={() => setTypeFilter(t)}
+              accessibilityRole="button"
+              accessibilityLabel={t === '' ? 'فیلتر همه انواع' : `فیلتر ${t === 'PODCAST' ? 'پادکست' : t === 'AUDIOBOOK' ? 'کتاب صوتی' : 'ویدیو'}`}
+              accessibilityState={{ selected: typeFilter === t }}
+            >
+              <Text style={[styles.filterText, typeFilter === t && styles.filterTextActive]}>
+                {t === '' ? 'همه' : t === 'PODCAST' ? 'پادکست' : t === 'AUDIOBOOK' ? 'کتاب صوتی' : 'ویدیو'}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {error ? <ErrorBanner message={error} onRetry={() => runSearch(query, typeFilter)} /> : null}
+
+        {!searched && (
+          <View style={styles.trending}>
+            <Text style={styles.trendingTitle}>جستجوهای پرطرفدار</Text>
+            {TRENDING.map((t) => (
+              <TouchableOpacity key={t} style={styles.trendChip} onPress={() => setQuery(t)} accessibilityLabel={`جستجوی ${t}`}>
+                <Text style={styles.trendText}>{t}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {loading && (
+          <View style={styles.center}>
+            <ActivityIndicator color={colors.accent} />
+          </View>
+        )}
+
+        {!loading && searched && !hasResults(results) && !error && (
+          <EmptyState title="نتیجه‌ای پیدا نشد" description="عبارت یا فیلتر دیگری امتحان کنید." />
+        )}
+
+        {showResults && results.creators.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>سازندگان</Text>
+            {results.creators.map(renderCreator)}
+          </>
+        )}
+
+        {showResults && results.episodes.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>اپیزودها</Text>
+            {results.episodes.map(renderEpisode)}
+          </>
+        )}
+
+        {showResults && results.contents.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>محتوا</Text>
+            <View style={isTablet ? styles.contentGrid : undefined}>
+              {results.contents.map(renderContent)}
+            </View>
+          </>
+        )}
+      </ScrollView>
+      </ResponsiveContainer>
     </SafeAreaView>
   );
 }

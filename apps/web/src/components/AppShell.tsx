@@ -2,6 +2,7 @@
 
 import { Nav } from '@/components/Nav';
 import { PlayerBar } from '@/components/PlayerBar';
+import { OnboardingModal } from '@/components/OnboardingModal';
 import { useSearchShortcut } from '@/hooks/useSearchShortcut';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <PlayerBar />
+      <OnboardingModal />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Vazirmatn_400Regular, Vazirmatn_500Medium, Vazirmatn_600SemiBold, Vazirmatn_700Bold } from '@expo-google-fonts/vazirmatn';
 import { AuthProvider } from '@/components/AuthProvider';
+import { OnboardingModal } from '@/components/OnboardingModal';
 import { ThemeProvider, useAppTheme } from '@/context/ThemeContext';
 import { fonts } from '@/constants/theme';
 
@@ -64,6 +65,7 @@ export default function RootLayout() {
     <ThemeProvider>
       <AuthProvider>
         <RootNavigator />
+        <OnboardingModal />
       </AuthProvider>
     </ThemeProvider>
   );

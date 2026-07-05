@@ -9,9 +9,11 @@ import { CoverArt } from '@/components/CoverArt';
 import { ProgressBar } from '@/components/ProgressBar';
 import { SectionHeader } from '@/components/SectionHeader';
 import { ErrorBanner } from '@/components/ErrorBanner';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
 
 function createStyles(colors: ThemeColors) {
   return {
@@ -46,12 +48,24 @@ function createStyles(colors: ThemeColors) {
       marginTop: spacing.sm,
     },
     loginBtnText: { color: colors.textOnPrimary, fontWeight: '700' as const, fontSize: 16 },
+    itemGrid: {
+      flexDirection: 'row-reverse' as const,
+      flexWrap: 'wrap' as const,
+      gap: spacing.sm,
+      paddingHorizontal: spacing.md,
+    },
+    itemTablet: {
+      width: '48%' as const,
+      marginHorizontal: 0,
+      marginBottom: 0,
+    },
   };
 }
 
 export default function LibraryScreen() {
   const { colors } = useAppTheme();
   const styles = useThemedStyles(createStyles);
+  const { isTablet } = useResponsiveLayout();
   const router = useRouter();
   const { accessToken, loadAuth } = usePlayerStore();
   const [continueItems, setContinueItems] = useState<
@@ -114,6 +128,7 @@ export default function LibraryScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      <ResponsiveContainer>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -135,6 +150,7 @@ export default function LibraryScreen() {
         {continueItems.length > 0 && (
           <View style={styles.section}>
             <SectionHeader title="ادامه گوش دادن" />
+            <View style={isTablet ? styles.itemGrid : undefined}>
             {continueItems.map((item) => {
               const progress = item.episode.duration
                 ? (item.position / item.episode.duration) * 100
@@ -142,7 +158,7 @@ export default function LibraryScreen() {
               return (
                 <TouchableOpacity
                   key={item.episode.id}
-                  style={styles.item}
+                  style={[styles.item, isTablet && styles.itemTablet]}
                   onPress={() => router.push(`/content/${item.episode.content.id}`)}
                   accessibilityRole="button"
                   accessibilityLabel={`ادامه: ${item.episode.title}`}
@@ -170,6 +186,7 @@ export default function LibraryScreen() {
                 </TouchableOpacity>
               );
             })}
+            </View>
           </View>
         )}
 
@@ -178,10 +195,11 @@ export default function LibraryScreen() {
           {library.length === 0 ? (
             <Text style={styles.empty}>کتابخانه خالی است</Text>
           ) : (
-            library.map((item) => (
+            <View style={isTablet ? styles.itemGrid : undefined}>
+            {library.map((item) => (
               <TouchableOpacity
                 key={item.content.id}
-                style={styles.item}
+                style={[styles.item, isTablet && styles.itemTablet]}
                 onPress={() => router.push(`/content/${item.content.id}`)}
                 accessibilityRole="button"
                 accessibilityLabel={item.content.title}
@@ -197,12 +215,14 @@ export default function LibraryScreen() {
                   size="sm"
                 />
               </TouchableOpacity>
-            ))
+            ))}
+            </View>
           )}
         </View>
 
-        <View style={{ height: spacing.xxl + 80 }} />
+        <View style={{ height: spacing.xxl + (isTablet ? 40 : 80) }} />
       </ScrollView>
+      </ResponsiveContainer>
     </SafeAreaView>
   );
 }

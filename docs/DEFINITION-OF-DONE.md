@@ -56,7 +56,7 @@
 
 ### Tests
 - [x] Unit test: Auth service
-- [ ] Integration tests (Phase 1.1)
+- [x] Integration tests (health, content HTTP layer)
 - [ ] E2E (Phase 2)
 
 ## خارج از Scope MVP

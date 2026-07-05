@@ -432,7 +432,7 @@ graph TB
 
 ### Onboarding checklist
 
-- [ ] Design first-run onboarding screens (mobile + web modal)
+- [x] Design first-run onboarding screens (mobile + web modal)
 - [x] Add registration flow UI
 - [ ] Create empty-account home state with guided CTAs
 - [ ] Add contextual coach marks for player controls (first play)
@@ -749,17 +749,18 @@ This section is included because the design brief requested it. **No implementat
 
 ## 13. Tablet UX
 
-**Score: 4.0 / 10**
+**Score: 6.5 / 10**
 
 ### As-is
 
 - Web: `max-width: 1200px` only breakpoint at 768px for grid  
-- Mobile: Stretched phone layouts; no tablet-specific columns or split view  
+- Mobile: Responsive hooks (`useResponsiveLayout`), `ResponsiveContainer`, `TabletSplitView`, `TabletTabRail`; tablet side nav; 2-column grids on home, library, search; split player and content detail on tablet  
 
 ### Tablet checklist
 
-- [ ] Two-column master-detail on tablet (list + player)
-- [ ] Increase grid columns at 768–1024px
+- [x] Two-column master-detail on tablet (content detail + player split)
+- [x] Increase grid columns at 768–1024px (mobile home, library, search)
+- [x] Side navigation on tablet (mobile `TabletTabRail`)
 - [ ] Side navigation option on large screens (web)
 
 ---
@@ -1112,7 +1113,7 @@ typography: { fontFamily: 'Vazirmatn', scale: ... }
 - [x] Skeleton grid + list
 - [x] Play button micro-interaction
 - [x] `/` search focus on web
-- [ ] Bottom sheet player prototype
+- [x] Bottom sheet player prototype
 
 ---
 
@@ -1160,7 +1161,7 @@ typography: { fontFamily: 'Vazirmatn', scale: ... }
 | SRCH-002 full search results | High | Done |
 | Web video player | High | Done |
 | Premium paywall screen | High | Done |
-| Tablet layouts | Medium | Pending |
+| Tablet layouts | Medium | Done |
 
 ### Phase 7 checklist
 
@@ -1172,6 +1173,7 @@ typography: { fontFamily: 'Vazirmatn', scale: ... }
 - [x] Web library cover thumbnails
 - [x] Demo login hints hidden in production
 - [x] Mobile theme toggle + full screen theming (`useThemedStyles`)
+- [x] Mobile tablet layouts (side nav, split views, responsive grids)
 
 ---
 

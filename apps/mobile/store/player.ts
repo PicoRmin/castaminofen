@@ -24,8 +24,10 @@ interface PlayerState {
   refreshToken: string | null;
   user: AuthUser | null;
   authReady: boolean;
+  playerSheetExpanded: boolean;
 
   setAuth: (tokens: Pick<AuthTokens, 'accessToken' | 'refreshToken'>, user: AuthUser) => Promise<void>;
+  setPlayerSheetExpanded: (expanded: boolean) => void;
   loadAuth: () => Promise<void>;
   hydrateProfile: () => Promise<void>;
   refreshSession: () => Promise<boolean>;
@@ -64,6 +66,9 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   refreshToken: null,
   user: null,
   authReady: false,
+  playerSheetExpanded: false,
+
+  setPlayerSheetExpanded: (playerSheetExpanded) => set({ playerSheetExpanded }),
 
   setAuth: async (tokens, user) => {
     await persistAuth(tokens, user);
@@ -157,6 +162,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       streamUrl: null,
       isPlaying: false,
       position: 0,
+      playerSheetExpanded: false,
     });
   },
 

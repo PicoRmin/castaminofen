@@ -201,7 +201,11 @@ export default function ContentDetailScreen() {
       },
       res.data.url,
     );
-    router.push('/(tabs)/player');
+    if (isTablet) {
+      router.push('/(tabs)/player');
+    } else {
+      usePlayerStore.getState().setPlayerSheetExpanded(true);
+    }
   };
 
   const handlePaywallUnlocked = () => {
@@ -249,8 +253,8 @@ export default function ContentDetailScreen() {
     </View>
   );
 
-  const episodesBlock = (
-    <View style={isTablet ? styles.tabletEpisodes : undefined}>
+  const episodeList = (
+    <>
       <Text style={styles.sectionTitle}>اپیزودها ({content.episodes.length})</Text>
       <View style={isTablet ? styles.episodeGrid : undefined}>
         {content.episodes.map((item) => (
@@ -271,7 +275,15 @@ export default function ContentDetailScreen() {
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </>
+  );
+
+  const episodesBlock = isTablet ? (
+    <ScrollView style={styles.tabletEpisodes} showsVerticalScrollIndicator={false}>
+      {episodeList}
+    </ScrollView>
+  ) : (
+    <View>{episodeList}</View>
   );
 
   return (
