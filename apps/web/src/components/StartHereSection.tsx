@@ -31,7 +31,7 @@ export function StartHereSection({ picks }: StartHereSectionProps) {
     void Promise.all([
       apiFetch<Array<{ content: { id: string } }>>('/user/library', {}, accessToken),
       apiFetch<unknown[]>('/media/continue', {}, accessToken),
-    ]).then(([libRes, contRes) => {
+    ]).then(([libRes, contRes]) => {
       const libraryEmpty = !libRes.data?.length;
       const continueEmpty = !contRes.data?.length;
       setVisible(libraryEmpty && continueEmpty);
