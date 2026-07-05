@@ -860,10 +860,10 @@ This section is included because the design brief requested it. **No implementat
 
 - [ ] Page transition (subtle fade/slide) — web View Transitions API or Framer
 - [ ] Mobile: Reanimated for mini-player slide-up
-- [ ] Micro-interaction on play button (scale 0.95)
+- [x] Micro-interaction on play button (scale 0.95)
 - [x] Skeleton shimmer (respect reduced motion)
 - [ ] Pull-to-refresh indicator (mobile)
-- [ ] Tab switch cross-fade (optional)
+- [x] Tab switch cross-fade (optional)
 
 ---
 

@@ -16,6 +16,7 @@ import { CoverArt } from '@/components/CoverArt';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { SearchResultsSkeleton } from '@/components/Skeleton';
+import { TabFadeWrapper } from '@/components/TabFadeWrapper';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -333,6 +334,7 @@ export default function SearchScreen() {
   );
 
   return (
+    <TabFadeWrapper segment="search">
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ResponsiveContainer>
       <ScrollView
@@ -469,5 +471,6 @@ export default function SearchScreen() {
       </ScrollView>
       </ResponsiveContainer>
     </SafeAreaView>
+    </TabFadeWrapper>
   );
 }

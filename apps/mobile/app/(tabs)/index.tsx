@@ -8,6 +8,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { ContentGridSkeleton } from '@/components/Skeleton';
+import { TabFadeWrapper } from '@/components/TabFadeWrapper';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -200,17 +201,20 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <View style={styles.header}>
-          <View style={styles.skeletonTitle} />
-          <View style={styles.skeletonSubtitle} />
-        </View>
-        <ContentGridSkeleton count={6} />
-      </SafeAreaView>
+      <TabFadeWrapper segment="index">
+        <SafeAreaView style={styles.safe} edges={['top']}>
+          <View style={styles.header}>
+            <View style={styles.skeletonTitle} />
+            <View style={styles.skeletonSubtitle} />
+          </View>
+          <ContentGridSkeleton count={6} />
+        </SafeAreaView>
+      </TabFadeWrapper>
     );
   }
 
   return (
+    <TabFadeWrapper segment="index">
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ResponsiveContainer>
       <ScrollView
@@ -360,5 +364,6 @@ export default function HomeScreen() {
       </ScrollView>
       </ResponsiveContainer>
     </SafeAreaView>
+    </TabFadeWrapper>
   );
 }

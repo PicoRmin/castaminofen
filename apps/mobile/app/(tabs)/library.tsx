@@ -11,6 +11,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { EmptyState } from '@/components/EmptyState';
 import { ListRowSkeleton } from '@/components/Skeleton';
+import { TabFadeWrapper } from '@/components/TabFadeWrapper';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -116,6 +117,7 @@ export default function LibraryScreen() {
 
   if (!accessToken) {
     return (
+      <TabFadeWrapper segment="library">
       <SafeAreaView style={styles.safe} edges={['top']}>
         <View style={styles.header}>
           <Text style={styles.title}>کتابخانه</Text>
@@ -128,10 +130,12 @@ export default function LibraryScreen() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      </TabFadeWrapper>
     );
   }
 
   return (
+    <TabFadeWrapper segment="library">
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ResponsiveContainer>
       <ScrollView
@@ -242,5 +246,6 @@ export default function LibraryScreen() {
       </ScrollView>
       </ResponsiveContainer>
     </SafeAreaView>
+    </TabFadeWrapper>
   );
 }

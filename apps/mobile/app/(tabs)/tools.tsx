@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { usePlayerStore } from '@/store/player';
 import { PLAYBACK_SPEEDS, SLEEP_TIMER_OPTIONS } from '@castaminofen/shared';
 import { ScalePressable } from '@/components/ScalePressable';
+import { TabFadeWrapper } from '@/components/TabFadeWrapper';
 import { spacing, radius, fonts } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
@@ -193,6 +194,7 @@ export default function ToolsScreen() {
   const displayInitial = user?.displayName?.charAt(0) || '؟';
 
   return (
+    <TabFadeWrapper segment="tools">
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
@@ -338,5 +340,6 @@ export default function ToolsScreen() {
         <View style={{ height: spacing.xxl + 80 }} />
       </ScrollView>
     </SafeAreaView>
+    </TabFadeWrapper>
   );
 }
