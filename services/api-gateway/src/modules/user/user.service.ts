@@ -63,6 +63,12 @@ export class UserService {
     }
   }
 
+  async removeFromLibrary(userId: string, contentId: string) {
+    const deleted = await this.prisma.libraryItem.deleteMany({ where: { userId, contentId } });
+    if (deleted.count === 0) throw new NotFoundException('Not in library');
+    return { removed: true };
+  }
+
   async getLibrary(userId: string) {
     return this.prisma.libraryItem.findMany({
       where: { userId },

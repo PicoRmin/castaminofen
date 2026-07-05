@@ -434,7 +434,7 @@ graph TB
 
 - [x] Design first-run onboarding screens (mobile + web modal)
 - [x] Add registration flow UI
-- [ ] Create empty-account home state with guided CTAs
+- [x] Create empty-account home state with guided CTAs
 - [ ] Add contextual coach marks for player controls (first play)
 - [ ] Track onboarding completion in analytics (future)
 - [ ] Localize all onboarding copy (fa primary)
@@ -522,7 +522,7 @@ graph TB
 - [x] Empty state illustration + suggestions
 - [x] Render episodes and creators from API
 - [ ] Keyboard navigation (web): arrow keys + Enter
-- [ ] Recent searches (local storage)
+- [x] Recent searches (local storage)
 - [x] Clear (X) button in input
 - [x] Fix mobile category → search filter pass-through
 
@@ -545,10 +545,10 @@ graph TB
 
 ### Content discovery checklist
 
-- [ ] Trending shelf (API or curated)
+- [x] Trending shelf (API or curated)
 - [x] Wire follow button on content detail
 - [x] Add-to-library action on content detail
-- [ ] Related content section
+- [x] Related content section
 - [x] Premium content paywall entry when stream returns 403
 - [ ] Creator page / channel view (future)
 
@@ -781,9 +781,9 @@ This section is included because the design brief requested it. **No implementat
 
 ### Desktop checklist
 
-- [ ] Keyboard shortcuts overlay (`?`)
-- [ ] `/` focuses search
-- [ ] Space toggles play (when player active)
+- [x] Keyboard shortcuts overlay (`?`)
+- [x] `/` focuses search
+- [x] Space toggles play (when player active)
 - [ ] Wider explore grid at 1440px+
 - [ ] Optional sidebar navigation
 

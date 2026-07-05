@@ -12,6 +12,42 @@ export class ContentService {
     private redis: RedisService,
   ) {}
 
+  async getTrending(limit = 8) {
+    const items = await this.prisma.content.findMany({
+      where: { status: ContentStatus.PUBLISHED },
+      take: limit,
+      orderBy: [{ episodeCount: 'desc' }, { publishedAt: 'desc' }],
+      include: {
+        creator: { include: { user: { select: { displayName: true, avatarUrl: true } } } },
+        _count: { select: { episodes: true } },
+      },
+    });
+    return items.map(this.formatContent);
+  }
+
+  async getRelated(contentId: string, limit = 6) {
+    const source = await this.prisma.content.findFirst({
+      where: { id: contentId, status: ContentStatus.PUBLISHED },
+      select: { id: true, type: true, creatorId: true },
+    });
+    if (!source) throw new NotFoundException('Content not found');
+
+    const items = await this.prisma.content.findMany({
+      where: {
+        status: ContentStatus.PUBLISHED,
+        id: { not: contentId },
+        OR: [{ type: source.type }, { creatorId: source.creatorId }],
+      },
+      take: limit,
+      orderBy: { publishedAt: 'desc' },
+      include: {
+        creator: { include: { user: { select: { displayName: true, avatarUrl: true } } } },
+        _count: { select: { episodes: true } },
+      },
+    });
+    return items.map(this.formatContent);
+  }
+
   async explore(query: ExploreQueryDto) {
     const page = query.page || 1;
     const limit = query.limit || 20;

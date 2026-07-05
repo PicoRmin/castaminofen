@@ -38,6 +38,13 @@ export class UserController {
     return successResponse(await this.userService.addToLibrary(userId, contentId));
   }
 
+  @Delete('library/:contentId')
+  @Auth()
+  @ApiOperation({ summary: 'حذف از کتابخانه' })
+  async removeLibrary(@CurrentUser('id') userId: string, @Param('contentId') contentId: string) {
+    return successResponse(await this.userService.removeFromLibrary(userId, contentId));
+  }
+
   @Get('library')
   @Auth()
   @ApiOperation({ summary: 'کتابخانه' })

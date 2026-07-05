@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { CoverImage } from '@/components/CoverImage';
 import { PaywallModal } from '@/components/PaywallModal';
+import { RelatedContentSection } from '@/components/RelatedContentSection';
 import { usePlayerStore } from '@/store/player';
 import { apiFetch } from '@/lib/api';
 import { isPremiumError } from '@/lib/premium';
@@ -68,7 +69,13 @@ export default function ContentPage() {
       return;
     }
     if (inLibrary) {
-      showToast('حذف از کتابخانه — به‌زودی');
+      const res = await apiFetch(`/user/library/${id}`, { method: 'DELETE' }, accessToken);
+      if (res.success) {
+        setInLibrary(false);
+        showToast('از کتابخانه حذف شد');
+      } else {
+        showToast(res.error?.message || 'خطا');
+      }
       return;
     }
     const res = await apiFetch(`/user/library/${id}`, { method: 'POST' }, accessToken);
@@ -191,6 +198,8 @@ export default function ContentPage() {
           </li>
         ))}
       </ul>
+
+      <RelatedContentSection contentId={content.id} />
 
       <PaywallModal
         open={paywallOpen}

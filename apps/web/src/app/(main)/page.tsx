@@ -1,5 +1,7 @@
 import { ContinueListeningRow } from '@/components/ContinueListeningRow';
 import { ExploreGrid } from '@/components/ExploreGrid';
+import { StartHereSection } from '@/components/StartHereSection';
+import { TrendingSection } from '@/components/TrendingSection';
 import { rawFetch } from '@/lib/http';
 
 interface ContentItem {
@@ -23,6 +25,12 @@ export default async function HomePage() {
       <p className="section-subtitle">پادکست، کتاب صوتی و ویدیو — همه در یک جا</p>
 
       <ContinueListeningRow />
+
+      {initialContents && initialContents.length > 0 ? (
+        <StartHereSection picks={initialContents} />
+      ) : null}
+
+      <TrendingSection />
 
       <ExploreGrid initialContents={initialContents} initialError={initialError} />
     </>

@@ -31,8 +31,10 @@
 | Method | Path | Auth | توضیح |
 |--------|------|------|-------|
 | GET | `/explore` | Public | کاوش — paginated |
+| GET | `/trending` | Public | محتوای پرطرفدار |
 | GET | `/search?q=` | Public | جستجو |
 | GET | `/contents/:id` | Public | جزئیات + episodes |
+| GET | `/contents/:id/related` | Public | محتوای مرتبط |
 | GET | `/episodes/:id` | Public | جزئیات اپیزود |
 
 ## Creator
@@ -62,6 +64,7 @@
 | DELETE | `/user/follow/:creatorId` | JWT | Unfollow |
 | GET | `/user/following` | JWT | لیست |
 | POST | `/user/library/:contentId` | JWT | افزودن به کتابخانه |
+| DELETE | `/user/library/:contentId` | JWT | حذف از کتابخانه |
 | GET | `/user/library` | JWT | کتابخانه |
 | POST | `/user/playlists` | JWT | ایجاد پلی‌لیست |
 | GET | `/user/playlists` | JWT | لیست |

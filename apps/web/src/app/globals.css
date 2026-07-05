@@ -1474,6 +1474,181 @@ textarea:focus-visible,
   min-width: 120px;
 }
 
+/* Start here — new user shelf */
+.start-here-section {
+  margin-bottom: 2rem;
+}
+
+.start-here-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0.35rem 0 0;
+}
+
+.start-here-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.start-here-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.start-here-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.start-here-card-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.start-here-card-meta {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Trending + related content */
+.trending-section {
+  margin-bottom: 2rem;
+}
+
+.trending-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.trending-scroll .content-card {
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.related-section {
+  margin-top: 2rem;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.related-more {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+/* Recent searches */
+.recent-searches {
+  margin: 1rem 0 1.5rem;
+}
+
+.recent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.recent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.recent-chip-remove {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Keyboard shortcuts modal */
+.shortcuts-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.shortcuts-modal {
+  width: min(420px, 92vw);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.shortcuts-title {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+}
+
+.shortcuts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shortcuts-row {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.shortcuts-kbd {
+  font-family: inherit;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.shortcuts-close {
+  margin-top: 1.25rem;
+  width: 100%;
+  background: var(--accent);
+  color: var(--text-on-primary, #fff);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* Respect OS "reduce motion" preference */
 @media (prefers-reduced-motion: reduce) {
   *,

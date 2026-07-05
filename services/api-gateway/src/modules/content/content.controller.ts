@@ -31,6 +31,13 @@ export class ContentController {
   ) {}
 
   @Public()
+  @Get('trending')
+  @ApiOperation({ summary: 'محتوای پرطرفدار' })
+  async trending() {
+    return successResponse(await this.contentService.getTrending());
+  }
+
+  @Public()
   @Get('explore')
   @ApiOperation({ summary: 'کشف محتوا' })
   async explore(@Query() query: ExploreQueryDto) {
@@ -43,6 +50,13 @@ export class ContentController {
   @ApiOperation({ summary: 'جستجو' })
   async search(@Query() query: SearchQueryDto) {
     return successResponse(await this.contentService.search(query));
+  }
+
+  @Public()
+  @Get('contents/:id/related')
+  @ApiOperation({ summary: 'محتوای مرتبط' })
+  async getRelated(@Param('id') id: string) {
+    return successResponse(await this.contentService.getRelated(id));
   }
 
   @Public()

@@ -24,6 +24,7 @@ export const mockPrisma = {
   $queryRaw: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
   content: {
     findMany: jest.fn(),
+    findFirst: jest.fn(),
     count: jest.fn(),
     findUnique: jest.fn(),
   },

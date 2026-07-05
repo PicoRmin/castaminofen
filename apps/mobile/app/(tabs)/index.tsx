@@ -18,6 +18,8 @@ import { CoverArt } from '@/components/CoverArt';
 import { ProgressBar } from '@/components/ProgressBar';
 import { SectionHeader } from '@/components/SectionHeader';
 import { EmptyState } from '@/components/EmptyState';
+import { StartHereSection } from '@/components/StartHereSection';
+import { TrendingSection } from '@/components/TrendingSection';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -281,6 +283,10 @@ export default function HomeScreen() {
             />
           </View>
         )}
+
+        <StartHereSection picks={contents} />
+
+        <TrendingSection />
 
         {/* Categories */}
         <View style={styles.section}>

@@ -87,4 +87,55 @@ describe('Content (integration)', () => {
   it('GET /search rejects missing query param', async () => {
     await request(app.getHttpServer()).get('/search').expect(400);
   });
+
+  it('GET /trending returns popular content list', async () => {
+    mockPrisma.content.findMany.mockResolvedValue([
+      {
+        id: 'c2',
+        type: 'PODCAST',
+        title: 'ترند',
+        slug: 'trend',
+        coverUrl: null,
+        isPremium: false,
+        creator: {
+          id: 'cr1',
+          slug: 'creator',
+          isVerified: true,
+          user: { displayName: 'سازنده', avatarUrl: null },
+        },
+        _count: { episodes: 10 },
+      },
+    ]);
+
+    const res = await request(app.getHttpServer()).get('/trending').expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(res.body.data[0].title).toBe('ترند');
+  });
+
+  it('GET /contents/:id/related returns related items', async () => {
+    mockPrisma.content.findFirst.mockResolvedValue({ id: 'c1', type: 'PODCAST', creatorId: 'cr1' });
+    mockPrisma.content.findMany.mockResolvedValue([
+      {
+        id: 'c3',
+        type: 'PODCAST',
+        title: 'مرتبط',
+        slug: 'related',
+        coverUrl: null,
+        isPremium: false,
+        creator: {
+          id: 'cr2',
+          slug: 'creator2',
+          isVerified: false,
+          user: { displayName: 'سازنده ۲', avatarUrl: null },
+        },
+        _count: { episodes: 2 },
+      },
+    ]);
+
+    const res = await request(app.getHttpServer()).get('/contents/c1/related').expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(res.body.data[0].title).toBe('مرتبط');
+  });
 });

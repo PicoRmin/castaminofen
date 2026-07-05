@@ -12,6 +12,7 @@ import { apiFetch } from '@/lib/api';
 import { usePlayerStore } from '@/store/player';
 import { CoverArt } from '@/components/CoverArt';
 import { PaywallModal } from '@/components/PaywallModal';
+import { RelatedContentSection } from '@/components/RelatedContentSection';
 import { TabletSplitView } from '@/components/TabletSplitView';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
@@ -143,7 +144,13 @@ export default function ContentDetailScreen() {
       return;
     }
     if (inLibrary) {
-      Alert.alert('کتابخانه', 'این محتوا قبلاً ذخیره شده است.');
+      const res = await apiFetch(`/user/library/${id}`, { method: 'DELETE' }, accessToken);
+      if (res.success) {
+        setInLibrary(false);
+        Alert.alert('کتابخانه', 'از کتابخانه حذف شد');
+      } else {
+        Alert.alert('خطا', res.error?.message || 'خطا در حذف');
+      }
       return;
     }
     const res = await apiFetch(`/user/library/${id}`, { method: 'POST' }, accessToken);
@@ -295,6 +302,7 @@ export default function ContentDetailScreen() {
           <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             {heroBlock}
             {episodesBlock}
+            <RelatedContentSection contentId={id} />
             <View style={{ height: spacing.xl }} />
           </ScrollView>
         )}

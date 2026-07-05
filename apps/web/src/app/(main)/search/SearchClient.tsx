@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { SearchResultsView } from '@/components/SearchResultsView';
 import { apiFetch } from '@/lib/api';
+import { addRecentSearch, getRecentSearches, removeRecentSearch } from '@/lib/recentSearch';
 import {
   emptySearchResults,
   hasSearchResults,
@@ -25,7 +26,12 @@ export default function SearchClient({ initialQ, initialType }: SearchClientProp
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const lastSearch = useRef({ q: initialQ, type: initialType });
+
+  useEffect(() => {
+    setRecentSearches(getRecentSearches());
+  }, []);
 
   const runSearch = useCallback(async (q: string, type: string) => {
     const term = q.trim();
@@ -56,6 +62,9 @@ export default function SearchClient({ initialQ, initialType }: SearchClientProp
     }
 
     setResults(normalizeSearchResponse(res.data));
+    if (term.length >= 2) {
+      setRecentSearches(addRecentSearch(term));
+    }
     setLoading(false);
   }, []);
 
@@ -124,6 +133,45 @@ export default function SearchClient({ initialQ, initialType }: SearchClientProp
       </div>
 
       {error ? <ErrorBanner message={error} onRetry={handleRetry} /> : null}
+
+      {!query && recentSearches.length > 0 && !loading && (
+        <div className="recent-searches">
+          <div className="section-row">
+            <h2 className="section-heading">جستجوهای اخیر</h2>
+          </div>
+          <div className="recent-chips">
+            {recentSearches.map((term) => (
+              <button
+                key={term}
+                type="button"
+                className="recent-chip"
+                onClick={() => setQuery(term)}
+              >
+                {term}
+                <span
+                  className="recent-chip-remove"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`حذف ${term}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setRecentSearches(removeRecentSearch(term));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setRecentSearches(removeRecentSearch(term));
+                    }
+                  }}
+                >
+                  ×
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading && <p className="search-status">در حال جستجو...</p>}
 

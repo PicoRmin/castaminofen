@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { apiFetch } from '@/lib/api';
+import { addRecentSearch, getRecentSearches, removeRecentSearch } from '@/lib/recentSearch';
 import { CoverArt } from '@/components/CoverArt';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorBanner } from '@/components/ErrorBanner';
@@ -117,6 +118,20 @@ function createStyles(colors: ThemeColors) {
     filterTextActive: { color: colors.accent, fontWeight: '700' as const },
     trending: { padding: spacing.md, gap: spacing.sm },
     trendingTitle: { color: colors.textSecondary, fontSize: 14, textAlign: 'right' as const, marginBottom: spacing.sm },
+    recentRow: { flexDirection: 'row-reverse' as const, flexWrap: 'wrap' as const, gap: spacing.sm },
+    recentChip: {
+      flexDirection: 'row-reverse' as const,
+      alignItems: 'center' as const,
+      gap: spacing.xs,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      borderRadius: radius.full,
+      backgroundColor: colors.bgCard,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    recentText: { color: colors.textSecondary, fontSize: 13 },
+    recentRemove: { color: colors.textMuted, fontSize: 16, paddingHorizontal: 4 },
     trendChip: {
       alignSelf: 'flex-end' as const,
       backgroundColor: colors.bgCard,
@@ -186,6 +201,11 @@ export default function SearchScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  useEffect(() => {
+    void getRecentSearches().then(setRecentSearches);
+  }, []);
 
   const runSearch = useCallback(async (term: string, type: string, isRefresh = false) => {
     const q = term.trim();
@@ -217,6 +237,9 @@ export default function SearchScreen() {
     }
 
     setResults(normalizeSearchData(res.data));
+    if (q.length >= 2) {
+      void addRecentSearch(q).then(setRecentSearches);
+    }
     setLoading(false);
     setRefreshing(false);
   }, []);
@@ -376,6 +399,33 @@ export default function SearchScreen() {
         </View>
 
         {error ? <ErrorBanner message={error} onRetry={() => runSearch(query, typeFilter)} /> : null}
+
+        {!query && recentSearches.length > 0 && !loading && (
+          <View style={styles.trending}>
+            <Text style={styles.trendingTitle}>جستجوهای اخیر</Text>
+            <View style={styles.recentRow}>
+              {recentSearches.map((term) => (
+                <TouchableOpacity
+                  key={term}
+                  style={styles.recentChip}
+                  onPress={() => setQuery(term)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`جستجوی ${term}`}
+                >
+                  <Text style={styles.recentText}>{term}</Text>
+                  <TouchableOpacity
+                    onPress={() => void removeRecentSearch(term).then(setRecentSearches)}
+                    hitSlop={8}
+                    accessibilityLabel={`حذف ${term}`}
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.recentRemove}>×</Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {!searched && (
           <View style={styles.trending}>
