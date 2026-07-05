@@ -9,6 +9,8 @@ import { CoverArt } from '@/components/CoverArt';
 import { ProgressBar } from '@/components/ProgressBar';
 import { SectionHeader } from '@/components/SectionHeader';
 import { ErrorBanner } from '@/components/ErrorBanner';
+import { EmptyState } from '@/components/EmptyState';
+import { ListRowSkeleton } from '@/components/Skeleton';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -79,6 +81,7 @@ export default function LibraryScreen() {
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     loadAuth();
@@ -97,12 +100,14 @@ export default function LibraryScreen() {
     if (!contRes.success || !libRes.success) {
       setError(contRes.error?.message || libRes.error?.message || 'خطا در بارگذاری کتابخانه');
       setRefreshing(false);
+      setInitialLoading(false);
       return;
     }
 
     if (contRes.data) setContinueItems(contRes.data);
     if (libRes.data) setLibrary(libRes.data);
     setRefreshing(false);
+    setInitialLoading(false);
   }, [accessToken]);
 
   useEffect(() => {
@@ -147,6 +152,10 @@ export default function LibraryScreen() {
 
         {error ? <ErrorBanner message={error} onRetry={() => loadData()} /> : null}
 
+        {initialLoading ? (
+          <ListRowSkeleton count={5} />
+        ) : (
+          <>
         {continueItems.length > 0 && (
           <View style={styles.section}>
             <SectionHeader title="ادامه گوش دادن" />
@@ -193,7 +202,13 @@ export default function LibraryScreen() {
         <View style={styles.section}>
           <SectionHeader title="ذخیره‌شده‌ها" />
           {library.length === 0 ? (
-            <Text style={styles.empty}>کتابخانه خالی است</Text>
+            <EmptyState
+              icon="bookmark-outline"
+              title="کتابخانه خالی است"
+              description="از صفحه محتوا، «ذخیره در کتابخانه» را بزنید."
+              actionLabel="کاوش محتوا"
+              onAction={() => router.push('/(tabs)')}
+            />
           ) : (
             <View style={isTablet ? styles.itemGrid : undefined}>
             {library.map((item) => (
@@ -219,6 +234,9 @@ export default function LibraryScreen() {
             </View>
           )}
         </View>
+
+        </>
+        )}
 
         <View style={{ height: spacing.xxl + (isTablet ? 40 : 80) }} />
       </ScrollView>

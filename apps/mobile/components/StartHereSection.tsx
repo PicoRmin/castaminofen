@@ -23,7 +23,7 @@ function createStyles(colors: ThemeColors) {
     section: { marginTop: spacing.lg, paddingHorizontal: spacing.md },
     heading: { color: colors.textPrimary, fontSize: 18, fontWeight: '700' as const, textAlign: 'right' as const },
     desc: { color: colors.textMuted, fontSize: 14, marginTop: spacing.xs, textAlign: 'right' as const, lineHeight: 22 },
-    scroll: { marginTop: spacing.md, gap: spacing.md },
+    scroll: { marginTop: spacing.md, gap: spacing.md, flexDirection: 'row-reverse' as const },
     card: {
       width: 140,
       backgroundColor: colors.bgCard,
@@ -64,7 +64,7 @@ export function StartHereSection({ picks }: { picks: ContentPick[] }) {
     <View style={styles.section}>
       <Text style={styles.heading}>شروع کنید</Text>
       <Text style={styles.desc}>کتابخانه‌تان خالی است — با یکی از این محتواها شروع کنید.</Text>
-      <ScrollView horizontal inverted showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {picks.slice(0, 4).map((item) => (
           <TouchableOpacity
             key={item.id}

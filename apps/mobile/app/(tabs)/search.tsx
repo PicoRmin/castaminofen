@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +15,7 @@ import { addRecentSearch, getRecentSearches, removeRecentSearch } from '@/lib/re
 import { CoverArt } from '@/components/CoverArt';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorBanner } from '@/components/ErrorBanner';
+import { SearchResultsSkeleton } from '@/components/Skeleton';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -438,11 +438,7 @@ export default function SearchScreen() {
           </View>
         )}
 
-        {loading && (
-          <View style={styles.center}>
-            <ActivityIndicator color={colors.accent} />
-          </View>
-        )}
+        {loading && <SearchResultsSkeleton />}
 
         {!loading && searched && !hasResults(results) && !error && (
           <EmptyState title="نتیجه‌ای پیدا نشد" description="عبارت یا فیلتر دیگری امتحان کنید." />

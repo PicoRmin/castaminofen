@@ -435,7 +435,7 @@ graph TB
 - [x] Design first-run onboarding screens (mobile + web modal)
 - [x] Add registration flow UI
 - [x] Create empty-account home state with guided CTAs
-- [ ] Add contextual coach marks for player controls (first play)
+- [x] Add contextual coach marks for player controls (first play)
 - [ ] Track onboarding completion in analytics (future)
 - [ ] Localize all onboarding copy (fa primary)
 
@@ -596,7 +596,7 @@ graph TB
 - [ ] Queue / up next (future)
 - [ ] Chapters UI (Phase 2)
 - [ ] Transcript panel (Phase 2 — ASR)
-- [ ] Haptic on play/pause (mobile Phase 2)
+- [x] Haptic on play/pause (mobile Phase 2)
 
 ---
 
@@ -742,7 +742,7 @@ This section is included because the design brief requested it. **No implementat
 - [ ] Align accent to brand purple (or document gold as intentional sub-brand)
 - [ ] Hide/wire all dead affordances
 - [ ] Mini-player + bottom sheet player (Phase 2)
-- [ ] Haptic feedback
+- [x] Haptic feedback
 - [ ] Thumb-zone audit on player controls
 
 ---
@@ -838,7 +838,7 @@ This section is included because the design brief requested it. **No implementat
 ### Performance checklist
 
 - [ ] `next/font` for Vazirmatn
-- [ ] Skeleton components for grids and lists
+- [x] Skeleton components for grids and lists
 - [ ] Optimistic add-to-library
 - [ ] Network error banner + retry
 - [ ] Image lazy load + blur placeholder
@@ -861,7 +861,7 @@ This section is included because the design brief requested it. **No implementat
 - [ ] Page transition (subtle fade/slide) — web View Transitions API or Framer
 - [ ] Mobile: Reanimated for mini-player slide-up
 - [ ] Micro-interaction on play button (scale 0.95)
-- [ ] Skeleton shimmer (respect reduced motion)
+- [x] Skeleton shimmer (respect reduced motion)
 - [ ] Pull-to-refresh indicator (mobile)
 - [ ] Tab switch cross-fade (optional)
 

@@ -1,11 +1,13 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SLEEP_TIMER_OPTIONS } from '@castaminofen/shared';
 import { usePlayerStore } from '@/store/player';
 import { ProgressBar } from '@/components/ProgressBar';
+import { ScalePressable } from '@/components/ScalePressable';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
+import { hapticSelection } from '@/lib/haptics';
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -96,9 +98,14 @@ export function PlayerControls({ onSeek, onSkipForward, onSkipBackward }: Player
   const progress = currentEpisode.duration ? (position / currentEpisode.duration) * 100 : 0;
 
   const cycleSpeed = () => {
+    void hapticSelection();
     const speeds = [0.75, 1, 1.25, 1.5, 1.75, 2];
     const idx = speeds.indexOf(playbackSpeed);
     setSpeed(speeds[(idx + 1) % speeds.length]);
+  };
+
+  const handleTogglePlay = () => {
+    togglePlay();
   };
 
   return (
@@ -119,9 +126,10 @@ export function PlayerControls({ onSeek, onSkipForward, onSkipBackward }: Player
       </View>
 
       <View style={styles.controls}>
-        <TouchableOpacity
+        <ScalePressable
           onPress={toggleBookmark}
           style={styles.sideBtn}
+          haptic
           accessibilityLabel={isBookmarked ? 'حذف نشانک' : 'افزودن نشانک'}
           accessibilityRole="button"
         >
@@ -130,54 +138,76 @@ export function PlayerControls({ onSeek, onSkipForward, onSkipBackward }: Player
             size={26}
             color={isBookmarked ? colors.accent : colors.textSecondary}
           />
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity onPress={onSkipBackward} style={styles.skipBtn} accessibilityLabel="۱۵ ثانیه عقب" accessibilityRole="button">
+        <ScalePressable
+          onPress={onSkipBackward}
+          style={styles.skipBtn}
+          haptic
+          accessibilityLabel="۱۵ ثانیه عقب"
+          accessibilityRole="button"
+        >
           <Ionicons name="play-back" size={28} color={colors.textPrimary} />
           <Text style={styles.skipLabel}>۱۵</Text>
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity
+        <ScalePressable
           style={styles.playBtn}
-          onPress={togglePlay}
+          onPress={handleTogglePlay}
+          haptic
+          scaleTo={0.92}
           accessibilityLabel={isPlaying ? 'توقف' : 'پخش'}
           accessibilityRole="button"
         >
           <Ionicons name={isPlaying ? 'pause' : 'play'} size={32} color={colors.textOnPrimary} />
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity onPress={onSkipForward} style={styles.skipBtn} accessibilityLabel="۱۵ ثانیه جلو" accessibilityRole="button">
+        <ScalePressable
+          onPress={onSkipForward}
+          style={styles.skipBtn}
+          haptic
+          accessibilityLabel="۱۵ ثانیه جلو"
+          accessibilityRole="button"
+        >
           <Ionicons name="play-forward" size={28} color={colors.textPrimary} />
           <Text style={styles.skipLabel}>۱۵</Text>
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity onPress={cycleSpeed} style={styles.speedBtn} accessibilityLabel={`سرعت پخش ${playbackSpeed} برابر`} accessibilityRole="button">
+        <ScalePressable
+          onPress={cycleSpeed}
+          style={styles.speedBtn}
+          haptic
+          accessibilityLabel={`سرعت پخش ${playbackSpeed} برابر`}
+          accessibilityRole="button"
+        >
           <Text style={styles.speedText}>{playbackSpeed}x</Text>
-        </TouchableOpacity>
+        </ScalePressable>
       </View>
 
       <View style={styles.sleepRow}>
         <Text style={styles.sleepLabel}>تایمر خواب</Text>
         <View style={styles.sleepChips}>
           {SLEEP_TIMER_OPTIONS.slice(0, 4).map((m) => (
-            <TouchableOpacity
+            <ScalePressable
               key={m}
               style={styles.sleepChip}
               onPress={() => setSleepTimer(m)}
+              haptic
               accessibilityLabel={`تایمر خواب ${m} دقیقه`}
               accessibilityRole="button"
             >
               <Text style={styles.sleepChipText}>{m}د</Text>
-            </TouchableOpacity>
+            </ScalePressable>
           ))}
-          <TouchableOpacity
+          <ScalePressable
             style={styles.sleepChip}
             onPress={() => setSleepTimer(null)}
+            haptic
             accessibilityLabel="خاموش کردن تایمر خواب"
             accessibilityRole="button"
           >
             <Text style={styles.sleepChipText}>خاموش</Text>
-          </TouchableOpacity>
+          </ScalePressable>
         </View>
       </View>
     </>

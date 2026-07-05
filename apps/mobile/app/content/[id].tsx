@@ -13,6 +13,7 @@ import { usePlayerStore } from '@/store/player';
 import { CoverArt } from '@/components/CoverArt';
 import { PaywallModal } from '@/components/PaywallModal';
 import { RelatedContentSection } from '@/components/RelatedContentSection';
+import { ContentDetailSkeleton } from '@/components/Skeleton';
 import { TabletSplitView } from '@/components/TabletSplitView';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
@@ -219,10 +220,18 @@ export default function ContentDetailScreen() {
     if (pendingEpisode) void handlePlay(pendingEpisode);
   };
 
-  if (loading || !content) {
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ContentDetailSkeleton />
+      </View>
+    );
+  }
+
+  if (!content) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>{loading ? 'در حال بارگذاری...' : 'محتوا یافت نشد'}</Text>
+        <Text style={styles.muted}>محتوا یافت نشد</Text>
       </View>
     );
   }
@@ -297,7 +306,11 @@ export default function ContentDetailScreen() {
     <>
       <ResponsiveContainer>
         {isTablet ? (
-          <TabletSplitView master={heroBlock} detail={episodesBlock} />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <TabletSplitView master={heroBlock} detail={episodesBlock} />
+            <RelatedContentSection contentId={id} />
+            <View style={{ height: spacing.xl }} />
+          </ScrollView>
         ) : (
           <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             {heroBlock}

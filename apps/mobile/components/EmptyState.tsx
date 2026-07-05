@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { ScalePressable } from '@/components/ScalePressable';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
@@ -26,7 +27,7 @@ function createStyles(colors: ThemeColors) {
       minHeight: 44,
       justifyContent: 'center' as const,
     },
-    btnText: { color: colors.bgPrimary, fontWeight: '700' as const },
+    btnText: { color: colors.textOnPrimary, fontWeight: '700' as const },
   };
 }
 
@@ -40,14 +41,15 @@ export function EmptyState({ icon = 'albums-outline', title, description, action
       <Text style={styles.title}>{title}</Text>
       {description ? <Text style={styles.desc}>{description}</Text> : null}
       {actionLabel && onAction ? (
-        <TouchableOpacity
+        <ScalePressable
           style={styles.btn}
           onPress={onAction}
+          haptic
           accessibilityRole="button"
           accessibilityLabel={actionLabel}
         >
           <Text style={styles.btnText}>{actionLabel}</Text>
-        </TouchableOpacity>
+        </ScalePressable>
       ) : null}
     </View>
   );

@@ -5,7 +5,6 @@ import { apiFetch } from '@/lib/api';
 import { CoverArt } from '@/components/CoverArt';
 import { SectionHeader } from '@/components/SectionHeader';
 import { spacing, radius } from '@/constants/theme';
-import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
 
 interface ContentItem {
@@ -21,7 +20,7 @@ interface ContentItem {
 function createStyles(colors: ThemeColors) {
   return {
     section: { marginTop: spacing.lg },
-    scroll: { paddingHorizontal: spacing.md, gap: spacing.md },
+    scroll: { paddingHorizontal: spacing.md, gap: spacing.md, flexDirection: 'row-reverse' as const },
     card: {
       width: 150,
       backgroundColor: colors.bgCard,
@@ -36,7 +35,6 @@ function createStyles(colors: ThemeColors) {
 }
 
 export function TrendingSection() {
-  const { colors } = useAppTheme();
   const styles = useThemedStyles(createStyles);
   const router = useRouter();
   const [items, setItems] = useState<ContentItem[]>([]);
@@ -52,7 +50,7 @@ export function TrendingSection() {
   return (
     <View style={styles.section}>
       <SectionHeader title="ترند" actionLabel="جستجو" onAction={() => router.push('/(tabs)/search')} />
-      <ScrollView horizontal inverted showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {items.map((item) => (
           <TouchableOpacity
             key={item.id}

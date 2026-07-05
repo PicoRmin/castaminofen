@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MiniPlayer } from '@/components/MiniPlayer';
 import { PlayerBottomSheet } from '@/components/PlayerBottomSheet';
 import { TabletTabRail } from '@/components/TabletTabRail';
+import { TabBarButton } from '@/components/TabBarButton';
 import { PlayerAudioProvider } from '@/context/PlayerAudioContext';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
@@ -25,6 +26,7 @@ function TabLayoutInner() {
       <View style={styles.content}>
         <Tabs
           screenOptions={{
+            tabBarButton: (props) => <TabBarButton {...props} />,
             tabBarStyle: isTablet
               ? { display: 'none' }
               : {

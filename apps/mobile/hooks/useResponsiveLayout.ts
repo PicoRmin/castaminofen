@@ -15,11 +15,14 @@ export function useResponsiveLayout() {
   const maxContentWidth = isTablet ? Math.min(width, MAX_CONTENT_WIDTH) : width;
   const splitGap = spacing.lg;
 
+  const isLandscape = width > height;
+
   return {
     width,
     height,
     isTablet,
     isWide,
+    isLandscape,
     columns,
     categoryItemPercent,
     contentPadding,

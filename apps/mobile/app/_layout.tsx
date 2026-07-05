@@ -38,8 +38,15 @@ function RootNavigator() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="content/[id]" options={{ title: 'محتوا', headerShown: true }} />
-        <Stack.Screen name="video/[id]" options={{ title: 'ویدیو', headerShown: false }} />
+        <Stack.Screen
+          name="content/[id]"
+          options={{
+            title: 'محتوا',
+            headerShown: true,
+            animation: 'slide_from_left',
+          }}
+        />
+        <Stack.Screen name="video/[id]" options={{ title: 'ویدیو', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="login" options={{ title: 'ورود', presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="register" options={{ title: 'ثبت‌نام', presentation: 'modal', headerShown: false }} />
       </Stack>
