@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
 import { spacing, radius, fonts } from '@/constants/theme';
+import { hapticSelection } from '@/lib/haptics';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -67,7 +68,10 @@ export function TabletTabRail() {
           <TouchableOpacity
             key={tab.segment}
             style={[styles.tab, focused && styles.tabActive]}
-            onPress={() => router.push(tab.href as never)}
+            onPress={() => {
+              void hapticSelection();
+              router.push(tab.href as never);
+            }}
             accessibilityRole="tab"
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}

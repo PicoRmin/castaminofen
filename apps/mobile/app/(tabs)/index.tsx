@@ -5,10 +5,10 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  RefreshControl,
 } from 'react-native';
 import { ContentGridSkeleton } from '@/components/Skeleton';
 import { TabFadeWrapper } from '@/components/TabFadeWrapper';
+import { ThemedRefreshControl } from '@/components/ThemedRefreshControl';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -221,12 +221,7 @@ export default function HomeScreen() {
         style={styles.container}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => loadData(true)}
-            tintColor={colors.accent}
-            colors={[colors.accent]}
-          />
+          <ThemedRefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} />
         }
       >
         {error ? <ErrorBanner message={error} onRetry={() => loadData()} /> : null}

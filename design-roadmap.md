@@ -862,7 +862,7 @@ This section is included because the design brief requested it. **No implementat
 - [ ] Mobile: Reanimated for mini-player slide-up
 - [x] Micro-interaction on play button (scale 0.95)
 - [x] Skeleton shimmer (respect reduced motion)
-- [ ] Pull-to-refresh indicator (mobile)
+- [x] Pull-to-refresh indicator (mobile)
 - [x] Tab switch cross-fade (optional)
 
 ---

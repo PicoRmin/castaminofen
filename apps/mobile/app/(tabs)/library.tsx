@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -12,6 +12,7 @@ import { ErrorBanner } from '@/components/ErrorBanner';
 import { EmptyState } from '@/components/EmptyState';
 import { ListRowSkeleton } from '@/components/Skeleton';
 import { TabFadeWrapper } from '@/components/TabFadeWrapper';
+import { ThemedRefreshControl } from '@/components/ThemedRefreshControl';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -141,12 +142,7 @@ export default function LibraryScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => loadData(true)}
-            tintColor={colors.accent}
-            colors={[colors.accent]}
-          />
+          <ThemedRefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} />
         }
       >
         <View style={styles.header}>

@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
-  RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,6 +16,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { ErrorBanner } from '@/components/ErrorBanner';
 import { SearchResultsSkeleton } from '@/components/Skeleton';
 import { TabFadeWrapper } from '@/components/TabFadeWrapper';
+import { ThemedRefreshControl } from '@/components/ThemedRefreshControl';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { spacing, radius } from '@/constants/theme';
 import { useAppTheme } from '@/context/ThemeContext';
@@ -343,11 +343,9 @@ export default function SearchScreen() {
         keyboardShouldPersistTaps="handled"
         refreshControl={
           searched ? (
-            <RefreshControl
+            <ThemedRefreshControl
               refreshing={refreshing}
               onRefresh={() => runSearch(query, typeFilter, true)}
-              tintColor={colors.accent}
-              colors={[colors.accent]}
             />
           ) : undefined
         }
