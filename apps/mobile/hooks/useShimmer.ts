@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing } from 'react-native';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { motion } from '@/constants/motion';
+import { nativeDriver } from '@/lib/animated';
 
 /** Subtle opacity pulse for skeleton placeholders — respects reduced motion. */
 export function useShimmer() {
@@ -20,13 +21,13 @@ export function useShimmer() {
           toValue: 1,
           duration: motion.duration.slow,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: nativeDriver,
         }),
         Animated.timing(opacity, {
           toValue: 0.45,
           duration: motion.duration.slow,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: nativeDriver,
         }),
       ]),
     );

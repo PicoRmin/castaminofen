@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { motion } from '@/constants/motion';
+import { nativeDriver } from '@/lib/animated';
 import { hapticLight } from '@/lib/haptics';
 
 type ScalePressableProps = PressableProps & {
@@ -38,7 +39,7 @@ export function ScalePressable({
     }
     Animated.spring(scale, {
       toValue: value,
-      useNativeDriver: true,
+      useNativeDriver: nativeDriver,
       bounciness: value < 1 ? 0 : motion.spring.bounciness,
       speed: motion.spring.speed,
     }).start();

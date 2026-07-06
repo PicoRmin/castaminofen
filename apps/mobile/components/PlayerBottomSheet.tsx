@@ -19,6 +19,7 @@ import { ScalePressable } from '@/components/ScalePressable';
 import { useAudioEngineContext } from '@/context/PlayerAudioContext';
 import { spacing, radius } from '@/constants/theme';
 import { motion } from '@/constants/motion';
+import { nativeDriver } from '@/lib/animated';
 import { useAppTheme } from '@/context/ThemeContext';
 import { useThemedStyles, type ThemeColors } from '@/hooks/useThemedStyles';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -166,7 +167,7 @@ export function PlayerBottomSheet() {
       Animated.timing(backdropAnim, {
         toValue: expanded ? 1 : 0,
         duration: motion.duration.medium,
-        useNativeDriver: true,
+        useNativeDriver: nativeDriver,
       }),
     ]).start();
   }, [expanded, expandedHeight, heightAnim, backdropAnim, reducedMotion]);

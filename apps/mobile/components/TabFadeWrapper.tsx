@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { useSegments } from 'expo-router';
 import { motion } from '@/constants/motion';
+import { nativeDriver } from '@/lib/animated';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface TabFadeWrapperProps {
@@ -38,7 +39,7 @@ export function TabFadeWrapper({ segment, children }: TabFadeWrapperProps) {
     const anim = Animated.timing(opacity, {
       toValue: 1,
       duration: motion.duration.fast,
-      useNativeDriver: true,
+      useNativeDriver: nativeDriver,
     });
     anim.start();
     return () => anim.stop();
